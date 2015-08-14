@@ -1,11 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="BlocTime">
 <head lang="en">
     <meta charset="UTF-8">
     <title>Bloc Base Project</title>
     <link rel="stylesheet" href="/css/style.css">
-</head>
-<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.24/angular.min.js"></script>
+    <script src="https://cdn.firebase.com/js/client/2.2.1/firebase.js"></script>
+    <script src="https://cdn.firebase.com/libs/angularfire/1.1.2/angularfire.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.2.15/angular-ui-router.min.js"></script>
     <script src="/js/app.js"></script>
+  </head>
+<body>
+    <h1>Bloc Time</h1>
+    <nav class="BlocTime">
+    <div ui-view></div>
 </body>
 </html>
