@@ -3,7 +3,7 @@
 // to 25:00 after Reset is triggered.
 // Repurposed code from BlocJams.
 
-blocTime = angular.module('BlocTime', ['ui.router', 'firebase']);
+blocTime = angular.module('BlocTime', ['ui.router']);
 
 blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -15,39 +15,50 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
   });
 }]);
 
-blocTime.controller('Home.controller', ['$scope', '$firebase', function($scope, $firebase) {
-  var myDataRef = new Firebase('https://flickering-fire-4277.firebaseio.com/');
-  $scope.data = $firebase(ref);
-  $scope.toggleText = "Start";
-}]);
+blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', function($scope, $interval, $filter) {
+  var promise;
+  var onBreak = false;
+  var workTime = 25 * 60;
+  var breakTime = 5 * 60;
+  
+  $scope.title = "Bloc Time";
+  $scope.time = 25 * 60;
+  $scope.timeString = $filter('remainingTime')($scope.time);
+  $scope.toggleName = "Start";
+  $scope.start = function() {
+    $scope.stop();
+    promise = $interval(countDown, 1000);
+  }
+  $scope.stop = function() {
+    $interval.cancel(promise);
+  }
 
-blocTime.directive('home', ['$interval', function($interval) {
-  return {
-    templateUrl: '/templates/home.html',
-    restrict: 'E',
-    scope: true,
-    link: function(scope, element, attributes) {
-      scope.watch = 1500;
-      scope.toggleText = "Start";
-      // add Break toggle here.
-      var countdown = function() {
-        scope.watch--;
-      }
-      scope.toggleTextClicked = function() {
-        if (scope.toggleText === "Start") {
-          scope.toggleText = "Reset";
-          scope.interval = $interval(countdown, 1000);
-        } else {
-          scope.toggleText = "Start";
-          $interval.cancel(scope.interval);
-          scope,watch = 1500;
-        }
-      }
+  var countDown = function() {
+    $scope.time -= 1;
+    $scope.toggleName = "Reset";
+    if ($scope.time == 0) {
+      $scope.stop();
+    }
+    $scope.timeString = $filter('remainingTime')($scope.time);
+  }
+
+  $scope.updateTimer = function() {
+    if ($scope.toggleName === "Reset") {
+      $scope.stop();
+      $scope.time = 25 * 60;
+      $scope.timeString = $filter('remainingTime')($scope.time);
+      $scope.toggleName = "Start";
+    }
+    else {
+      $scope.start();
     }
   }
+
 }]);
 
-blocTime.filter('timecode', function() {
+
+  // added Bloc Jams filter
+blocTime.filter('remainingTime', function() {
   return function(seconds) {
     seconds = Number.parseFloat(seconds);
 

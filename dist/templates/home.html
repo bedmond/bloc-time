@@ -1,3 +1,5 @@
-<h1><time class="track">{{ watch | timecode }}<time></h1>
-<button id="left" class="Start" ng-click="toggleTextClicked()">{{ toggleText }}</button>
-<br>
+<div class="col-xs-12 app-content">
+  <h1>{{ title }}</h1>
+  <h2>{{ timeString }}</h2>
+<button ng-click="updateTimer()" class="btn btn-default">{{ toggleName }}</button>
+</div>
