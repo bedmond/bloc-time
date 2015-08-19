@@ -16,19 +16,25 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
 }]);
 
 blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', function($scope, $interval, $filter) {
+  
   var promise;
+
   var onBreak = false;
-  var workTime = 25 * 60;
-  var breakTime = 5 * 60;
+
+  var workSession = 25 * 60;
+
+  var breakSession = 5 * 60;
   
   $scope.title = "Bloc Time";
   $scope.time = 25 * 60;
-  $scope.timeString = $filter('remainingTime')($scope.time);
   $scope.toggleName = "Start";
+
   $scope.start = function() {
+    // Make sure there aren't two countdowns happening
     $scope.stop();
     promise = $interval(countDown, 1000);
   }
+
   $scope.stop = function() {
     $interval.cancel(promise);
   }
@@ -39,14 +45,12 @@ blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', functi
     if ($scope.time == 0) {
       $scope.stop();
     }
-    $scope.timeString = $filter('remainingTime')($scope.time);
   }
 
   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
-      $scope.time = 25 * 60;
-      $scope.timeString = $filter('remainingTime')($scope.time);
+      $scope.time = workSession;
       $scope.toggleName = "Start";
     }
     else {
