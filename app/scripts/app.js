@@ -16,47 +16,46 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
 }]);
 
 blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', function($scope, $interval, $filter) {
-  
-  var promise;
 
-  var onBreak = false;
-
-  var workSession = 25 * 60;
-
-  var breakSession = 5 * 60;
-  
   $scope.title = "Bloc Time";
-  $scope.time = 25 * 60;
   $scope.toggleName = "Start";
+  $scope.toggleTime = 25 * 60;
+  $scope.timerSet = null;
+  $scope.onBreak = false;
 
   $scope.start = function() {
-    // Make sure there aren't two countdowns happening
-    $scope.stop();
-    promise = $interval(countDown, 1000);
+    $scope.timerSet = $interval($scope.countDown, 1000);
   }
 
-  $scope.stop = function() {
-    $interval.cancel(promise);
-  }
-
-  var countDown = function() {
-    $scope.time -= 1;
+  $scope.countDown = function() {
+    $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
-    if ($scope.time == 0) {
+    if ($scope.toggleTime == 0) {
       $scope.stop();
+    }
+  }
+  // break time here?
+  $scope.stop = function() {
+    $interval.cancel($scope.timerSet);
+    $scope.timerSet = null;
+    if ($scope.onBreak) {
+      $scope.setWorkSession();
+    } else {
+      $scope.setBreak;
     }
   }
 
   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
-      $scope.time = workSession;
+      $scope.toggleTime = 25 * 60;
       $scope.toggleName = "Start";
-    }
-    else {
+    } else {
       $scope.start();
     }
   }
+
+  // break timer function followed by work session function?
 
 }]);
 
