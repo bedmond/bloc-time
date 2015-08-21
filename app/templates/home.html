@@ -1,5 +1,6 @@
 <div class="col-xs-12 app-content">
   <h1>{{ title }}</h1>
-  <h2>{{ time | remainingTime }}</h2>
-<button ng-click="updateTimer()" class="btn btn-default">{{ toggleName }}</button>
+  <h2>{{ toggleTime | remainingTime }}</h2>
+<button ng-click="updateTimer()" ng-show="!onShortBreak" class="btn btn-default">{{ toggleName }}</button>
+<button ng-click="updateTimer()" ng-show="onShortBreak" class="btn btn-default">{{ toggleName }}</button>
 </div>

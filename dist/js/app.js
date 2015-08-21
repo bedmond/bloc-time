@@ -39,10 +39,16 @@ blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', functi
     $interval.cancel(promise);
   }
 
-  var countDown = function() {
-    $scope.time -= 1;
+  $scope.title = "Bloc Time";
+  $scope.toggleName = "Start";
+  $scope.toggleTime = 25 * 60;
+  $scope.timerSet = null;
+  $scope.onBreak = false;
+
+  $scope.countDown = function() {
+    $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
-    if ($scope.time == 0) {
+    if ($scope.toggleTime == 0) {
       $scope.stop();
     }
   }
@@ -51,11 +57,43 @@ blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', functi
     if ($scope.toggleName === "Reset") {
       $scope.stop();
       $scope.time = workSession;
+      $scope.timerSet = null;
+      if ($scope.onBreak) {
+        $scope.setWorkTime();
+      } else {
+        $scope.setShortBreak();
+      }
+    }    
+  };
+  // Add reset for short break timer.
+  $scope.updateTimer = function() {
+    if ($scope.toggleName === "Reset") {
+      $scope.stop();
+      $scope.toggleTime = 25 * 60;
       $scope.toggleName = "Start";
-    }
-    else {
+    } else {
       $scope.start();
     }
+  }
+  
+  $scope.start = function() {
+    $scope.timerSet = $interval($scope.countDown, 1000);
+  }
+
+  $scope.stop = function() {
+    $interval.cancel($scope.timerSet);
+  }
+
+  $scope.setShortBreak = function() {
+    $scope.onBreak = true;
+    $scope.toggleTime = 5 * 60;
+    $scope.toggleName = "Short Break";
+  }
+
+  $scope.setWorkTime = function() {
+    $scope.onBreak = false;
+    $scope.toggleTime = 25 * 60;
+    $scope.toggleName = "Start";
   }
 
 }]);
