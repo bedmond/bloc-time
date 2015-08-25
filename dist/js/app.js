@@ -15,20 +15,27 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
   });
 }]);
 
-blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', function($scope, $interval, $filter) {
+//Set up constants for better maintainability.
+blocTime.constant('APP_TIMERS', {
+    'WORK_SESSION': 25 * 60,
+    'SHORT_BREAK': 5 * 60,
+    'LONG_BREAK': 30 * 60
+  });
+
+blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$filter', function($scope, $interval, APP_TIMERS, $filter) {
 
   $scope.title = "Bloc Time";
   $scope.toggleName = "Start";
-  $scope.toggleTime = 25 * 60;
-  $scope.timerSet = null;
+  $scope.toggleTime = APP_TIMERS.WORK_SESSION;
   $scope.onBreak = false;
+  $scope.completedWorkSessions = 0;
 
+  // Counts down if there is time on the counter.
   $scope.countDown = function() {
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
     if ($scope.toggleTime == 0) {
       $scope.stop();
-      $scope.timerSet = null;
       if ($scope.onBreak) {
         $scope.setWorkTime();
       } else {
@@ -36,16 +43,20 @@ blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', functi
       }
     }    
   };
-  // Add reset for short break timer.
+  // Activated when button is clicked.
   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
-      $scope.toggleTime = 25 * 60;
-      $scope.toggleName = "Start";
+      if ($scope.onBreak) {
+        $scope.setShortBreak();    
+      } else {
+        $scope.setWorkTime();
+      }
     } else {
       $scope.start();
+      $scope.toggleName = "Reset";
     }
-  }
+  };
   
   $scope.start = function() {
     $scope.timerSet = $interval($scope.countDown, 1000);
@@ -55,18 +66,26 @@ blocTime.controller('Home.controller', ['$scope', '$interval', '$filter', functi
     $interval.cancel($scope.timerSet);
   }
 
-  $scope.setShortBreak = function() {
-    $scope.onBreak = true;
-    $scope.toggleTime = 5 * 60;
-    $scope.toggleName = "Short Break";
-  }
-
   $scope.setWorkTime = function() {
     $scope.onBreak = false;
-    $scope.toggleTime = 25 * 60;
+    $scope.toggleTime = APP_TIMERS.WORK_SESSION;
     $scope.toggleName = "Start";
   }
 
+  $scope.setShortBreak = function() {
+    $scope.onBreak = true;
+    $scope.toggleTime = APP_TIMERS.SHORT_BREAK;
+    $scope.toggleName = "Short Break";
+  }
+
+  // 30 minute break function.
+  $scope.setLongBreak = function() {
+    $scope.onBreak = true;
+    Scope.toggleTime = APP_TIMERS.L;
+    $scope.toggleName = "Long Break";
+  }
+
+  
 }]);
 
 
