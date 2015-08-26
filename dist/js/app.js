@@ -1,8 +1,3 @@
-// Initial attempt at creating a Start button that triggers
-// a timer counting down from 25:00 to O minutes and resets
-// to 25:00 after Reset is triggered.
-// Repurposed code from BlocJams.
-
 blocTime = angular.module('BlocTime', ['ui.router']);
 
 blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
@@ -15,11 +10,10 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
   });
 }]);
 
-//Set up constants for better maintainability.
 blocTime.constant('APP_TIMERS', {
-    'WORK_SESSION': 25 * 60,
+    'WORK_SESSION': 15 * 60, //changed times for testing.
     'SHORT_BREAK': 5 * 60,
-    'LONG_BREAK': 30 * 60
+    'LONG_BREAK': 10 * 60
   });
 
 blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$filter', function($scope, $interval, APP_TIMERS, $filter) {
@@ -30,7 +24,6 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   $scope.onBreak = false;
   $scope.completedWorkSessions = 0;
 
-  // Counts down if there is time on the counter.
   $scope.countDown = function() {
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
@@ -39,11 +32,18 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
       if ($scope.onBreak) {
         $scope.setWorkTime();
       } else {
-        $scope.setShortBreak();
+        $scope.completedWorkSessions++;
+        console.log($scope.completedWorkSessions); //to test work session increments.
+        if ($scope.completedWorkSessions == 2) { //changed for testing.
+          $scope.setLongBreak();
+          $scope.completedWorkSessions = 0;
+        } else {
+          $scope.setShortBreak();
+        }
       }
     }    
   };
-  // Activated when button is clicked.
+  
   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
@@ -52,6 +52,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
       } else {
         $scope.setWorkTime();
       }
+
     } else {
       $scope.start();
       $scope.toggleName = "Reset";
@@ -78,18 +79,15 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.toggleName = "Short Break";
   }
 
-  // 30 minute break function.
   $scope.setLongBreak = function() {
     $scope.onBreak = true;
-    Scope.toggleTime = APP_TIMERS.L;
+    $scope.toggleTime = APP_TIMERS.LONG_BREAK;
     $scope.toggleName = "Long Break";
   }
 
   
 }]);
 
-
-  // added Bloc Jams filter
 blocTime.filter('remainingTime', function() {
   return function(seconds) {
     seconds = Number.parseFloat(seconds);
