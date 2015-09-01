@@ -22,14 +22,19 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   $scope.toggleName = "Start";
   $scope.toggleTime = APP_TIMERS.WORK_SESSION;
   $scope.onBreak = false;
+  $scope.onLongBreak = false;
   $scope.completedWorkSessions = 0;
+  $scope.soundFile = new buzz.sound("/sounds/DING1.mp3", {
+    preload: true
+  });
 
   $scope.countDown = function() {
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
     if ($scope.toggleTime == 0) {
+      $scope.playSoundFile();
       $scope.stop();
-      if ($scope.onBreak) {
+      if ($scope.onBreak || $scope.onLongBreak) {
         $scope.setWorkTime();
       } else {
         $scope.completedWorkSessions++;
@@ -41,18 +46,28 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
           $scope.setShortBreak();
         }
       }
-    }    
+      //watches for APP_TIMERS to hit 0, call $scope.play function.
+      //Need to finish this.
+      //$scope.$watch('toggleTime', function(newVal, oldVal) {
+        //console.log(newVal, oldVal);
+        //if (newVal == 0);
+          //$scope.soundFile.play();
+      //});
+    }
   };
-  
+ 
+  //need to fix updateTimer so that toggling Reset button
+  //on Long Break resets to Long Break instead of Short Break.
   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
       if ($scope.onBreak) {
-        $scope.setShortBreak();    
+        $scope.setShortBreak();
+      } if ($scope.onLongBreak) {
+      $scope.setLongBreak();
       } else {
-        $scope.setWorkTime();
+        $scope.setWorkTime(); 
       }
-
     } else {
       $scope.start();
       $scope.toggleName = "Reset";
@@ -80,12 +95,18 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   }
 
   $scope.setLongBreak = function() {
-    $scope.onBreak = true;
+    $scope.onLongBreak = true;
     $scope.toggleTime = APP_TIMERS.LONG_BREAK;
     $scope.toggleName = "Long Break";
   }
 
-  
+  $scope.playSoundFile = function() {
+    $scope.soundFile = new buzz.sound("/sounds/DING1.mp3", {
+    preload: true
+  });
+
+  }
+
 }]);
 
 blocTime.filter('remainingTime', function() {
