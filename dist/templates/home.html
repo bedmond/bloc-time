@@ -1,6 +1,29 @@
-<div class="col-xs-12 app-content">
-  <h1>{{ title }}</h1>
-  <h2>{{ toggleTime | remainingTime }}</h2>
-<button ng-click="updateTimer()" ng-show="!onShortBreak" class="btn btn-default">{{ toggleName }}</button>
-<button ng-click="updateTimer()" ng-show="onShortBreak" class="btn btn-default">{{ toggleName }}</button>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-xs-3 sidebar">
+      </br>
+      <h4>Task History<h4>
+        <div class="form-group">
+        <input ng-model="task" id="taskInput" class="form-control" type="text" placeholder="Enter task..."></input>
+        </div>
+        <button class="btn btn-info pull-right" ng-click="addTask()">Add task</button>
+      <table class="table table-striped">
+      </br>
+      </br>
+      </br>
+        <tr ng-repeat="task in tasks">
+          <td>{{ task.name }}</td>
+        </tr>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-xs-8 app-content">
+        <h4>{{ title }}</h4>
+        <h1>{{ toggleTime | remainingTime }}</h1>
+        </br>
+      <button ng-click="updateTimer()" ng-show="!onBreak" class="btn btn-info">{{ toggleName }}</button>
+      <button ng-click="updateTimer()" ng-show="onBreak" class="btn btn-default">{{ toggleName }}</button>
+      </div>
+    </div>
+  </div>
 </div>

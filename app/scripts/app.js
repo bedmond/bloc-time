@@ -1,4 +1,4 @@
-blocTime = angular.module('BlocTime', ['ui.router']);
+blocTime = angular.module('BlocTime', ['ui.router', 'firebase']);
 
 blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider, $locationProvider) {
   $locationProvider.html5Mode(true);
@@ -16,13 +16,14 @@ blocTime.constant('APP_TIMERS', {
     'LONG_BREAK': 10 * 60
   });
 
-blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$filter', function($scope, $interval, APP_TIMERS, $filter) {
+blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$filter', '$firebaseArray', function($scope, $interval, APP_TIMERS, $filter, $firebaseArray) {
 
-  $scope.title = "Bloc Time";
+  $scope.title = "TIMER";
   $scope.toggleName = "Start";
   $scope.toggleTime = APP_TIMERS.WORK_SESSION;
   $scope.onBreak = false;
   $scope.onLongBreak = false;
+  $scope.onWorkTime = true;
   $scope.completedWorkSessions = 0;
   $scope.soundFile = new buzz.sound("/sounds/DING1.mp3", {
     preload: true
@@ -32,7 +33,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
     if ($scope.toggleTime == 0) {
-      $scope.playSoundFile();
+      $scope.soundFile.play();//sound is not playing.
       $scope.stop();
       if ($scope.onBreak || $scope.onLongBreak) {
         $scope.setWorkTime();
@@ -56,17 +57,15 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     }
   };
  
-  //need to fix updateTimer so that toggling Reset button
-  //on Long Break resets to Long Break instead of Short Break.
-  $scope.updateTimer = function() {
+   $scope.updateTimer = function() {
     if ($scope.toggleName === "Reset") {
       $scope.stop();
       if ($scope.onBreak) {
         $scope.setShortBreak();
       } if ($scope.onLongBreak) {
-      $scope.setLongBreak();
-      } else {
-        $scope.setWorkTime(); 
+          $scope.setLongBreak();
+      } if ($scope.onWorkTime) {
+          $scope.setWorkTime(); 
       }
     } else {
       $scope.start();
@@ -83,28 +82,36 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   }
 
   $scope.setWorkTime = function() {
+    $scope.onWorkTime = true;
     $scope.onBreak = false;
+    $scope.onLongBreak = false;
     $scope.toggleTime = APP_TIMERS.WORK_SESSION;
     $scope.toggleName = "Start";
   }
 
   $scope.setShortBreak = function() {
     $scope.onBreak = true;
+    $scope.onLongBreak = false;
+    $scope.onWorkTime = false;
     $scope.toggleTime = APP_TIMERS.SHORT_BREAK;
     $scope.toggleName = "Short Break";
   }
 
   $scope.setLongBreak = function() {
     $scope.onLongBreak = true;
+    $scope.onBreak = false;
+    $scope.onWorkTime = false;
     $scope.toggleTime = APP_TIMERS.LONG_BREAK;
     $scope.toggleName = "Long Break";
   }
 
-  $scope.playSoundFile = function() {
-    $scope.soundFile = new buzz.sound("/sounds/DING1.mp3", {
-    preload: true
-  });
+  var ref = new Firebase("https://flickering-fire-4277.firebaseio.com");
+  $scope.tasks = $firebaseArray(ref);
 
+  $scope.addTask = function() {
+    var name = $scope.task;
+    $scope.tasks.$add({name: $scope.task});
+    $scope.task = "";
   }
 
 }]);
@@ -120,11 +127,8 @@ blocTime.filter('remainingTime', function() {
 
     // Make it a whole number.
     var wholeSeconds = Math.floor(seconds);
-
     var minutes = Math.floor(wholeSeconds / 60);
-
     var remainingSeconds = wholeSeconds % 60;
-
     var output = minutes + ':';
 
     // Zero pad seconds, so 9 seconds should be :09.
@@ -133,7 +137,6 @@ blocTime.filter('remainingTime', function() {
     }
 
     output += remainingSeconds;
-
     return output;
   }
 });
