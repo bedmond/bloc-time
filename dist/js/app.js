@@ -33,7 +33,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
     if ($scope.toggleTime == 0) {
-      $scope.soundFile.play();//sound is not playing.
+      //$scope.soundFile.play();//sound is not playing.
       $scope.stop();
       if ($scope.onBreak || $scope.onLongBreak) {
         $scope.setWorkTime();
@@ -49,7 +49,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
       }
       //watches for APP_TIMERS to hit 0, call $scope.play function.
       //Need to finish this.
-      //$scope.$watch('toggleTime', function(newVal, oldVal) {
+      //$scope.$watch('$scope.countDown', function(newVal, oldVal) {
         //console.log(newVal, oldVal);
         //if (newVal == 0);
           //$scope.soundFile.play();
@@ -105,14 +105,23 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.toggleName = "Long Break";
   }
 
+  //injected into controller.
   var ref = new Firebase("https://flickering-fire-4277.firebaseio.com");
+
+  //download data into read-only array.
   $scope.tasks = $firebaseArray(ref);
 
+  //function for entering and saving data into Firebase.
+  //need to reverse order of {( timestamp: Firebase.ServerValue.TIMESTAMP }) to display newest entry first.
   $scope.addTask = function() {
     var name = $scope.task;
-    $scope.tasks.$add({name: $scope.task});
+    $scope.tasks.$add({
+      name: $scope.task,
+      created_at: Firebase.ServerValue.TIMESTAMP
+    });
+
     $scope.task = "";
-  }
+  };
 
 }]);
 

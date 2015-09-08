@@ -2,19 +2,23 @@
   <div class="row">
     <div class="col-xs-3 sidebar">
       </br>
-      <h4>Task History<h4>
+      <h4>TASK HISTORY<h4>
         <div class="form-group">
         <input ng-model="task" id="taskInput" class="form-control" type="text" placeholder="Enter task..."></input>
         </div>
-        <button class="btn btn-info pull-right" ng-click="addTask()">Add task</button>
+        <button class="btn btn-info pull-right" ng-click="addTask()">Add Task</button>
       <table class="table table-striped">
       </br>
       </br>
-      </br>
-        <tr ng-repeat="task in tasks">
-          <td>{{ task.name }}</td>
+        <tr ng-repeat="task in tasks | orderBy: 'created_at': true"></br>
+      <!-- attempt to order tasks -->
+
+          <td>{{ task.name }} <a class="btn btn-info pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">x</a></td>
+          
         </tr>
+        <!-- attempt to remove a task -->
       </table>
+
     </div>
     <div class="row">
       <div class="col-xs-8 app-content">
@@ -22,7 +26,7 @@
         <h1>{{ toggleTime | remainingTime }}</h1>
         </br>
       <button ng-click="updateTimer()" ng-show="!onBreak" class="btn btn-info">{{ toggleName }}</button>
-      <button ng-click="updateTimer()" ng-show="onBreak" class="btn btn-default">{{ toggleName }}</button>
+      <button ng-click="updateTimer()" ng-show="onBreak" class="btn btn-info">{{ toggleName }}</button>
       </div>
     </div>
   </div>
