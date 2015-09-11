@@ -25,7 +25,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   $scope.onLongBreak = false;
   $scope.onWorkTime = true;
   $scope.completedWorkSessions = 0;
-  $scope.soundFile = new buzz.sound("/sounds/DING1.mp3", {
+  var soundFile = new buzz.sound("/sounds/Elevator Ding-SoundBible.com-685385892.mp3", {
     preload: true
   });
 
@@ -33,7 +33,8 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.toggleTime -= 100; // speeded up countdown for testing.
     $scope.toggleName = "Reset";
     if ($scope.toggleTime == 0) {
-      //$scope.soundFile.play();//sound is not playing.
+      soundFile.play();//sound is not playing.
+      console.log(soundFile);
       $scope.stop();
       if ($scope.onBreak || $scope.onLongBreak) {
         $scope.setWorkTime();
