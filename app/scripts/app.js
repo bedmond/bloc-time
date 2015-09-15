@@ -19,7 +19,7 @@ blocTime.constant('APP_TIMERS', {
 blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$filter', '$firebaseArray', function($scope, $interval, APP_TIMERS, $filter, $firebaseArray) {
 
   $scope.title = "TIMER";
-  $scope.toggleName = "Start";
+  $scope.toggleName = "START";
   $scope.toggleTime = APP_TIMERS.WORK_SESSION;
   $scope.onBreak = false;
   $scope.onLongBreak = false;
@@ -31,9 +31,9 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
 
   $scope.countDown = function() {
     $scope.toggleTime -= 100; // speeded up countdown for testing.
-    $scope.toggleName = "Reset";
+    $scope.toggleName = "RESET";
     if ($scope.toggleTime == 0) {
-      soundFile.play();//sound is not playing.
+      soundFile.play();
       console.log(soundFile);
       $scope.stop();
       if ($scope.onBreak || $scope.onLongBreak) {
@@ -48,18 +48,11 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
           $scope.setShortBreak();
         }
       }
-      //watches for APP_TIMERS to hit 0, call $scope.play function.
-      //Need to finish this.
-      //$scope.$watch('$scope.countDown', function(newVal, oldVal) {
-        //console.log(newVal, oldVal);
-        //if (newVal == 0);
-          //$scope.soundFile.play();
-      //});
     }
   };
  
    $scope.updateTimer = function() {
-    if ($scope.toggleName === "Reset") {
+    if ($scope.toggleName === "RESET") {
       $scope.stop();
       if ($scope.onBreak) {
         $scope.setShortBreak();
@@ -70,7 +63,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
       }
     } else {
       $scope.start();
-      $scope.toggleName = "Reset";
+      $scope.toggleName = "RESET";
     }
   };
   
@@ -87,7 +80,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.onBreak = false;
     $scope.onLongBreak = false;
     $scope.toggleTime = APP_TIMERS.WORK_SESSION;
-    $scope.toggleName = "Start";
+    $scope.toggleName = "START";
   }
 
   $scope.setShortBreak = function() {
@@ -95,7 +88,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.onLongBreak = false;
     $scope.onWorkTime = false;
     $scope.toggleTime = APP_TIMERS.SHORT_BREAK;
-    $scope.toggleName = "Short Break";
+    $scope.toggleName = "5 MIN BREAK";
   }
 
   $scope.setLongBreak = function() {
@@ -103,17 +96,13 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
     $scope.onBreak = false;
     $scope.onWorkTime = false;
     $scope.toggleTime = APP_TIMERS.LONG_BREAK;
-    $scope.toggleName = "Long Break";
+    $scope.toggleName = "30 MIN BREAK";
   }
 
-  //injected into controller.
   var ref = new Firebase("https://flickering-fire-4277.firebaseio.com");
 
-  //download data into read-only array.
   $scope.tasks = $firebaseArray(ref);
 
-  //function for entering and saving data into Firebase.
-  //need to reverse order of {( timestamp: Firebase.ServerValue.TIMESTAMP }) to display newest entry first.
   $scope.addTask = function() {
     var name = $scope.task;
     $scope.tasks.$add({
@@ -130,18 +119,15 @@ blocTime.filter('remainingTime', function() {
   return function(seconds) {
     seconds = Number.parseFloat(seconds);
 
-    // Returned when no time is provided.
     if (Number.isNaN(seconds)) {
       return '--:--';
     }
 
-    // Make it a whole number.
     var wholeSeconds = Math.floor(seconds);
     var minutes = Math.floor(wholeSeconds / 60);
     var remainingSeconds = wholeSeconds % 60;
     var output = minutes + ':';
 
-    // Zero pad seconds, so 9 seconds should be :09.
     if (remainingSeconds < 10) {
       output += '0';
     }

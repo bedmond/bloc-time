@@ -19,10 +19,10 @@ var Hapi = require('hapi'),
             handler: createDirectoryRoute('images')
         },
         sounds: {
-            method: 'GET'
+            method: 'GET',
             path: '/sounds/{path*}',
             handler: createDirectoryRoute('sounds')
-        };
+        },
         templates: {
             method: 'GET',
             path: '/templates/{path*}',
