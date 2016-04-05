@@ -11,7 +11,7 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
 }]);
 
 blocTime.constant('APP_TIMERS', {
-    'WORK_SESSION': 15 * 60, //changed times for testing.
+    'WORK_SESSION': 15 * 60,
     'SHORT_BREAK': 5 * 60,
     'LONG_BREAK': 10 * 60
   });
@@ -30,7 +30,7 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
   });
 
   $scope.countDown = function() {
-    $scope.toggleTime -= 100; // speeded up countdown for testing.
+    $scope.toggleTime -= 100;
     $scope.toggleName = "RESET";
     if ($scope.toggleTime == 0) {
       soundFile.play();
@@ -40,8 +40,8 @@ blocTime.controller('Home.controller', ['$scope', '$interval', 'APP_TIMERS', '$f
         $scope.setWorkTime();
       } else {
         $scope.completedWorkSessions++;
-        console.log($scope.completedWorkSessions); //to test work session increments.
-        if ($scope.completedWorkSessions == 2) { //changed for testing.
+        console.log($scope.completedWorkSessions); //to count work session increments.
+        if ($scope.completedWorkSessions == 4) { //4 Work sessions then 30 min break.
           $scope.setLongBreak();
           $scope.completedWorkSessions = 0;
         } else {

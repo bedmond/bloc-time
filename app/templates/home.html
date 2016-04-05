@@ -10,18 +10,17 @@
       <table class="table table-striped">
       </br>
       </br>
+        <!-- Order tasks -->
         <tr ng-repeat="task in tasks | orderBy: 'created_at': true"></br>
-      <!-- attempt to order tasks -->
-
-          <td>{{ task.name }} <a class="btn btn-info pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">x</a></td>
-          
+          <!-- Remove a task -->
+          <td>{{ task.name }} <a class="btn btn-info pull-right btn-xs" href="#" role="button" ng-click="tasks.$remove(task)">x</a></td>      
         </tr>
-        <!-- attempt to remove a task -->
       </table>
 
     </div>
     <div class="row">
       <div class="col-xs-8 app-content">
+        <img src="/app/images/bloctimeBackground.jpg"> 
         <h4>{{ title }}</h4>
         <h1>{{ toggleTime | remainingTime }}</h1>
         </br>
