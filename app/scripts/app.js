@@ -10,6 +10,7 @@ blocTime.config(['$stateProvider', '$locationProvider', function($stateProvider,
   });
 }]);
 
+//Define timers
 blocTime.constant('APP_TIMERS', {
     'WORK_SESSION': 15 * 60,
     'SHORT_BREAK': 5 * 60,
